@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>欢迎</title>
+    <style type="text/css">
+        .main img{
+            width: 100px;
+            height:auto;
+            position: relative;
+            left: 100px;
+            top:1000px;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/JakartaEE2024WebApp_war_exploded/css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <form class="form-signin" onsubmit="return ValidLogin(this)" action="/JakartaEE2024WebApp_war_exploded/login-servlet" method="post">
+        <div class="title">
+            <h2 class="form-signin-heading">请登录</h2>
+        </div>
+       <div class="main">
+           <img src="images/1.jpg" alt="logo "  >
+       </div>
+
+
+        <div class="main">
+            <input type="text" class="form-input" name="username" placeholder="" required/>
+
+            <input type="password" class="form-input" name="password" required placeholder="密码" />
+        </div>
+        <div class="remember-me">
+            <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe">
+            <label class="checkbox">记住我鸭</label>
+        </div>
+
+        <div class="btn-wrapper">
+            <button class="btn" type="submit">登录</button>
+            <a class="toRegister" href="/register.html">注册</a>
+        </div>
+    </form>
+</div>
+</body>
+<script type="text/javascript">
+    function ValidLogin(formValue) {
+        var username = formValue.username.value,
+            psw = formValue.password.value;
+        var parentnode = document.querySelector(".form-signin-heading");
+        var valid = true;
+        clearWrongMes(parentnode);
+        if(username === "xiaomin" && psw !== "123") {
+            createWrongMes("密码错误",parentnode);
+            valid = false;
+        }
+        return valid;
+    }
+    function createWrongMes(mes, beforeNode) {
+        var elem = document.createElement("p");
+        var textNode = document.createTextNode(mes);
+        elem.appendChild(textNode);
+        elem.style.color="red";
+        beforeNode.parentNode.insertBefore(elem,beforeNode.nextSibling);
+    }
+    function clearWrongMes(beforeNode) {
+        var elem = beforeNode.nextElementSibling;
+        if (elem !=null && elem.nodeType != 3) {
+            while(elem !=null && elem.nodeName === 'P') {
+                elem.parentNode.removeChild(elem);
+                elem = beforeNode.nextElementSibling;
+            }
+        }
+    }
+</script>
+</html>

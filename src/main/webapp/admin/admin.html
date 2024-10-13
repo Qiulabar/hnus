@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <input type="text" placeholder="搜索用户">
+        <button>搜索用户</button>
+    </div>
+    <div>
+        <a href="/JakartaEE2024WebApp_war_exploded/admin/addUser.html">添加用户</a>
+    </div>
+</div>
+<table border="1">
+    <thead>
+    <tr>
+        <th>用户ID</th>
+        <th>用户名</th>
+        <th>用户真实姓名</th>
+        <th>用户性别</th>
+        <th>用户类型</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody id="userDataBody">
+
+    </tbody>
+</table>
+<script>
+    // 使用 AJAX 从 Servlet 获取数据并填充表格
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const users = JSON.parse(xhr.responseText);
+            const tbody = document.getElementById('userDataBody');
+            users.forEach(user => {
+                const row = tbody.insertRow();
+                const idCell = row.insertCell(0);
+                const usernameCell = row.insertCell(1);
+                const realNameCell = row.insertCell(2);
+                const genderCell = row.insertCell(3);
+                const userTypeCell = row.insertCell(4);
+                const operationCell = row.insertCell(5);
+                idCell.textContent = user.id;
+                usernameCell.textContent = user.username;
+                realNameCell.textContent = user.realName;
+                genderCell.textContent = user.gender;
+                if(user.gender == 1){
+                    genderCell.textContent = "男";
+                }else if(user.gender == 0){
+                    genderCell.textContent = "女";
+                }
+                if(user.userType == 2){
+                    userTypeCell.textContent = "管理员";
+                }else if(user.userType == 1){
+                    userTypeCell.textContent = "教师";
+                }else if(user.userType == 0){
+                    userTypeCell.textContent = "学生";
+                }
+                const editLink = document.createElement('a');
+                editLink.href = `/JakartaEE2024WebApp_war_exploded/admin/editUser.html?id=${user.id}`; // 假设每个用户有一个唯一的 id
+                editLink.textContent = '编辑';
+                const editButton = document.createElement('button');
+                editButton.appendChild(editLink);
+                operationCell.appendChild(editButton);
+                const deleteLink = document.createElement('a');
+                deleteLink.href = `userDel-servlet?id=${user.id}`; // 假设存在处理删除的 Servlet
+                deleteLink.textContent = '删除';
+                const deleteButton = document.createElement('button');
+                deleteButton.appendChild(deleteLink);
+                operationCell.appendChild(deleteButton);
+
+            });
+        }
+    };
+    xhr.open('GET', '/JakartaEE2024WebApp_war_exploded/userList-servlet', true);
+    xhr.send();
+</script>
+</body>
+
+</html>

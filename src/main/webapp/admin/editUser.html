@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>编辑用户</title>
+  <style>
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+      margin: 0 auto;
+    }
+
+    label {
+      margin-top: 10px;
+    }
+
+    input,
+    select {
+      padding: 5px;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+<h2>编辑用户</h2>
+<form id="addUserForm">
+  <input type="hidden" id="id">
+  <label for="username">用户名：</label>
+  <input type="text" id="username" required>
+  <label for="realName">用户真实姓名：</label>
+  <input type="text" id="realName" required>
+  <label for="gender">用户性别：</label>
+  <select id="gender">
+    <option value="1">男</option>
+    <option value="0">女</option>
+  </select>
+
+  <label for="userType">用户类型：</label>
+  <select id="userType">
+    <option value="2">管理员</option>
+    <option value="1">教师</option>
+    <option value="0">学生</option>
+  </select>
+  <button type="button" onclick="editUser()">提交</button>
+</form>
+<script>
+  // 使用用户列表界面传递的参数获取用户id
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id');
+  // 使用 AJAX 从 UserServlet 获取用户数据
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `/JakartaEE2024WebApp_war_exploded/user-servlet?id=${id}`, true);
+  xhr.send();
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      const users = JSON.parse(xhr.responseText);
+      users.forEach(user => {
+        document.getElementById('id').value = user.id;
+        document.getElementById('username').value = user.username;
+        document.getElementById('realName').value = user.realName;
+        document.getElementById('gender').value = user.gender;
+        document.getElementById('userType').value = user.userType;
+      });
+    }
+  };
+
+  function editUser() {
+    const username = document.getElementById('username').value;
+    const realName = document.getElementById('realName').value;
+    const gender = document.getElementById('gender').value;
+    const userType = document.getElementById('userType').value;
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/JakartaEE2024WebApp_war_exploded/editUser-servlet', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(`id=${id}&username=${username}&realName=${realName}&gender=${gender}&userType=${userType}`);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        alert("用户修改成功");
+        // 可以在这里进行添加成功后的处理，比如刷新用户列表页面
+        window.location.href = 'admin.html';
+      }
+    };
+  }
+</script>
+</body>
+
+</html>
